@@ -1,0 +1,21 @@
+Script do huggingface para pretreinamento e fine-tuning the diferentes modelos
+
+comando exemplo:
+    python -m torch.distributed.launch --nproc_per_node=4 --nnodes=1 --node_rank=0 --master_addr=localhost --master_port=12000 run_mlm-lm_pretrain-finetuning-modified.py --train_data_file ./dataset_test/data.txt --output_dir ./output/ --mlm --do_train --fp16 --model_name_or_path bert-base-multilingual-cased
+
+
+O comando permite a continuação do pretreinamento, começando com os pesos do modelo multilingue cased disponibilizado em huggingface:
+    reference: https://huggingface.co/transformers/pretrained_models.html 
+    modelo base : bert-base-multilingual-cased
+
+O script run_mlm-lm_pretrain-finetuning-modified.py é a modificação do script compartilhado no huggingface run_mlm-lm_pretrain-finetuning.py 
+    Modificações:
+        - Tirar a parte evaluation (o foco o pre-treinamento)
+        - modificar os valores dos labels, especificamente trocar os labels -1 por -100, onde -100 significa que na medição do loss não deve considerar os mesmos.
+        - Trocar o scheduler WarmupLinearSchedule por  get_linear_schedule_with_warmup
+            além disso também são atualizados as chaves dentro da instancia
+
+Referencias:
+    - https://huggingface.co/blog/how-to-train 
+    - htpps://arxiv.org/pdf/2002.12327.pdf (A Primer BERTology)
+    - http://repositorio.unicamp.br/jspui/handle/REPOSIP/357977 (Bertimbau)
